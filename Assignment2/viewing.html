@@ -32,14 +32,14 @@
 					width: 0.5,
 					height: 1.0,
 					background: new THREE.Color( 0.5, 0.5, 0.7 ),
-					eye: [ -2, 0, 15 ],
+					eye: [ -2, 0, 10 ],
 					up: [ 0, 1, 0 ],
 					fov: 60,
 					updateCamera: function ( camera, scene, mouseX ) {
 
-					  // camera.position.x += mouseX * 0.05;
-					  // camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-					  // camera.lookAt( scene.position );
+            camera.position.x += ( mouseX - camera.position.x ) * .05;
+    				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+					  camera.lookAt( scene.position );
 
 					}
 				},
@@ -49,14 +49,14 @@
 					width: 0.5,
 					height: 1,
 					background: new THREE.Color( 0.7, 0.5, 0.5 ),
-					eye: [ 2, 0, 15 ],
+					eye: [ 2, 0, 10 ],
 					up: [ 0, 1, 0 ],
 					fov: 60,
 					updateCamera: function ( camera, scene, mouseX ) {
 
-					  // camera.position.x -= mouseX * 0.05;
-					  // camera.position.x = Math.max( Math.min( camera.position.x, 2000 ), - 2000 );
-					  // camera.lookAt( camera.position.clone().setY( 0 ) );
+            camera.position.x += ( mouseX - camera.position.x ) * .05;
+    				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+					  camera.lookAt( scene.position );
 
 					}
 				}
@@ -85,7 +85,6 @@
         // Create Bot
 				var geometry = new THREE.PlaneGeometry(3, 3, 5, 5);
 				var material = new THREE.MeshBasicMaterial();
-				//material.wireframe = true;
 				var group = new THREE.Group();
 				scene.add(group);
 
@@ -96,7 +95,7 @@
 				group.add(object);
 
 				material = new THREE.MeshNormalMaterial();
-				// material.wireframe = true;
+
 				// Create legs
 				geometry = new THREE.BoxGeometry(.3, .3, 1);
 				object = new THREE.Mesh(geometry, material);
