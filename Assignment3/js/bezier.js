@@ -1,5 +1,6 @@
 var camera, scene, renderer;
 var controlPoints, controlMesh;
+var stepSize = 0.2;
 
 controlPoints = [
   -1.5, 0.0, -1.5,
@@ -20,6 +21,13 @@ controlPoints = [
   1.5, 0.0, 1.5
 ]
 
+var bezier = [
+  [-1, 3, -3, 1],
+  [3, -6, 3, 0],
+  [-3, 3, 0, 0],
+  [1, 0, 0, 0]
+]
+
 init();
 animate();
 
@@ -31,9 +39,10 @@ function init() {
   camera.position.z = 5;
   camera.rotation.x = -45;
 
+  // Generate mesh from control points
   var geometry = new THREE.BufferGeometry();
 
-  var segments = 4;
+  var segments = 3;
 
   var indices = [];
   var vertices = controlPoints;
