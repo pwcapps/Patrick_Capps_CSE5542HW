@@ -1,5 +1,5 @@
 var camera, scene, renderer;
-var mesh, cube;
+var controlPoints, controlMesh;
 
 init();
 animate();
@@ -10,10 +10,24 @@ function init() {
 
   camera.position.z = 5;
 
-  var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  var material = new THREE.MeshBasicMaterial( { color: 0x00ff00 } );
-  cube = new THREE.Mesh( geometry, material );
-  scene.add( cube );
+  var geometry = new THREE.BufferGeometry();
+  // create a simple square shape. We duplicate the top left and bottom right
+  // vertices because each vertex needs to appear once per triangle.
+  controlPoints = new Float32Array( [
+  	-1.0, -1.0,  1.0,
+  	 1.0, -1.0,  1.0,
+  	 1.0,  1.0,  1.0,
+
+  	 1.0,  1.0,  1.0,
+  	-1.0,  1.0,  1.0,
+  	-1.0, -1.0,  1.0
+  ] );
+
+  // itemSize = 3 because there are 3 values (components) per vertex
+  geometry.addAttribute( 'position', new THREE.BufferAttribute( controlPoints, 3 ) );
+  var material = new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true } );
+  controlMesh = new THREE.Mesh( geometry, material );
+  scene.add(controlMesh);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -22,9 +36,6 @@ function init() {
 
 function animate() {
   requestAnimationFrame( animate );
-
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
 
   renderer.render( scene, camera );
 }
