@@ -78,7 +78,17 @@ function init() {
     i += 3;
 
   }
-  console.log(pointsArrays);
+
+  var curve1 = [pointsArrays[0], pointsArrays[1], pointsArrays[2], pointsArrays[3]];
+  for ( i = 0; i <= 1; i += stepSize ) {
+    var p = evalBCurve(curve1, i);
+    console.log(p);
+    var geometry2 = new THREE.SphereGeometry(0.1, 10, 10);
+    material.wireframe = false;
+    var obj = new THREE.Mesh( geometry2, material );
+    obj.position = new THREE.Vector3(p[0], p[1], p[2]);
+    scene.add(obj);
+  }
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -89,4 +99,29 @@ function animate() {
   requestAnimationFrame( animate );
 
   renderer.render( scene, camera );
+}
+
+function evalBCurve(points, t) {
+
+  var b0 = (1 - t) * (1 - t) * (1 - t);
+  var b1 = 3 * t * (1 - t) * (1 - t);
+  var b2 = 3 * t * t * (t - 1);
+  var b3 = t * t * t;
+  var point = pointAddition(multPointScalar(points[0], b0), multPointScalar(points[1], b1));
+  var temp = pointAddition(multPointScalar(points[2], b2), multPointScalar(points[3], b3));
+  point = pointAddition(point, temp);
+  return point;
+
+}
+
+function multPointScalar(point, s) {
+
+  return [point[0] * s, point[1] * s, point[2] * s];
+
+}
+
+function pointAddition(p1, p2) {
+
+  return [p1[0] + p2[0], p1[1] + p2[1], p1[2] + p2[2]];
+
 }
