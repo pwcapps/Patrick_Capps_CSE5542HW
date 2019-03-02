@@ -1,5 +1,6 @@
 var camera, scene, renderer;
 var controlPoints, controlMesh;
+var pointsArrays = [];
 var stepSize = 0.2;
 
 controlPoints = [
@@ -68,6 +69,16 @@ function init() {
   var material = new THREE.MeshBasicMaterial( { color: 0x0000ff, wireframe: true } );
   controlMesh = new THREE.Mesh( geometry, material );
   scene.add(controlMesh);
+
+  // Get each vertex as an array for calculating bezier surface
+  var i = 0;
+  while ( i < controlPoints.length - 2 ) {
+
+    pointsArrays.push( [controlPoints[i], controlPoints[i + 1], controlPoints[i + 2]] );
+    i += 3;
+
+  }
+  console.log(pointsArrays);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
