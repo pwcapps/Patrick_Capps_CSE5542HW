@@ -4,6 +4,7 @@ var pointsArrays = [];
 var stepSize = 0.1;
 
 controlPoints = generateControlPoints(-3, 3, 1, 4);
+console.log(controlPoints);
 
 init();
 animate();
@@ -178,7 +179,7 @@ function generateControlPoints(minDim, maxDim, xzRange, yRange) {
         var x = Math.random() * xzRange + (pos - xzRange / 2);
         var y = Math.random() * yRange - (yRange / 2);
         var z = Math.random() * xzRange + (zDim - xzRange / 2);
-        vertices.push(x, y, zDim);
+        vertices.push(x, y, z);
         pos += stepSize;
 
       }
