@@ -70,37 +70,41 @@ function init() {
   controlMesh = new THREE.Mesh( geometry, material );
   scene.add(controlMesh);
 
-  // Get each vertex as an array for calculating bezier surface
-  // var i = 0;
-  // while ( i < controlPoints.length - 2 ) {
-  //
-  //   pointsArrays.push( [controlPoints[i], controlPoints[i + 1], controlPoints[i + 2]] );
-  //   i += 3;
-  //
-  // }
   pointsArrays = listToVectors(controlPoints);
-  console.log(pointsArrays);
-  console.log(vectorsToList(pointsArrays));
-  console.log(controlPoints);
+  for (i = 0; i < pointsArrays.length; i++) {
+    createPoint(pointsArrays[i]);
+  }
 
-  // var curve1 = [pointsArrays[0], pointsArrays[1], pointsArrays[2], pointsArrays[3]];
-  // for ( i = 0; i <= 1; i += stepSize ) {
-  //   var p = evalBCurve(curve1, i);
-  //   console.log(p);
-  //   geometry = new THREE.SphereGeometry(0.05, 10, 10);
-  //   material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false } );
-  //   var obj = new THREE.Mesh( geometry, material );
-  //   obj.position.set(p[0], p[1], p[2]);
-  //   scene.add(obj);
-  // }
-
+  var bezierPoints = [];
   for (u = 0; u <= 1; u += stepSize) {
     for (v = 0; v <= 1; v += stepSize) {
-      var p = evalBSurface(pointsArrays, u, v);
-      console.log(p);
-      createPoint(p);
+      bezierPoints.push(evalBSurface(pointsArrays, u, v));
     }
   }
+
+  bezierPoints = vectorsToList(bezierPoints);
+  segments = 1 / stepSize;
+
+  var bIndices = [];
+  for ( i = 0; i < segments; i++ ) {
+    for ( j = 0; j < segments; j++ ) {
+
+      var a = i * ( segments + 1 ) + ( j + 1 );
+      var b = i * ( segments + 1 ) + j;
+      var c = ( i + 1 ) * ( segments + 1 ) + j;
+      var d = ( i + 1 ) * ( segments + 1 ) + ( j + 1 );
+      // generate two faces (triangles) per iteration
+      bIndices.push( a, b, d ); // face one
+      bIndices.push( b, c, d ); // face two
+
+    }
+  }
+  var bezGeo = new THREE.BufferGeometry();
+  bezGeo.setIndex(bIndices);
+  bezGeo.addAttribute( 'position', new THREE.Float32BufferAttribute( bezierPoints, 3 ) );
+  material = new THREE.MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
+  var bMesh = new THREE.Mesh( bezGeo, material );
+  scene.add(bMesh);
 
   renderer = new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
@@ -152,8 +156,8 @@ function pointAddition(p1, p2) {
 }
 
 function createPoint(p) {
-  geometry = new THREE.SphereGeometry(0.05, 10, 10);
-  material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false } );
+  var geometry = new THREE.SphereGeometry(0.05, 10, 10);
+  var material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false } );
   var obj = new THREE.Mesh( geometry, material );
   obj.position.set(p[0], p[1], p[2]);
   scene.add(obj);
