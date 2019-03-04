@@ -71,13 +71,14 @@ function init() {
   scene.add(controlMesh);
 
   // Get each vertex as an array for calculating bezier surface
-  var i = 0;
-  while ( i < controlPoints.length - 2 ) {
-
-    pointsArrays.push( [controlPoints[i], controlPoints[i + 1], controlPoints[i + 2]] );
-    i += 3;
-
-  }
+  // var i = 0;
+  // while ( i < controlPoints.length - 2 ) {
+  //
+  //   pointsArrays.push( [controlPoints[i], controlPoints[i + 1], controlPoints[i + 2]] );
+  //   i += 3;
+  //
+  // }
+  pointsArrays = listToVectors(controlPoints);
 
   // var curve1 = [pointsArrays[0], pointsArrays[1], pointsArrays[2], pointsArrays[3]];
   // for ( i = 0; i <= 1; i += stepSize ) {
@@ -97,7 +98,7 @@ function init() {
       createPoint(p);
     }
   }
-  
+
   renderer = new THREE.WebGLRenderer();
   renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( renderer.domElement );
@@ -153,4 +154,15 @@ function createPoint(p) {
   var obj = new THREE.Mesh( geometry, material );
   obj.position.set(p[0], p[1], p[2]);
   scene.add(obj);
+}
+
+function listToVectors(vertexList) {
+  var vectors = [];
+  var i = 0;
+  while ( i < vertexList.length - 2 ) {
+    vectors.push( [vertexList[i], vertexList[i + 1], vertexList[i + 2]] );
+    i += 3;
+  }
+
+  return vectors;
 }
