@@ -86,7 +86,7 @@ function init() {
     geometry = new THREE.SphereGeometry(0.05, 10, 10);
     material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false } );
     var obj = new THREE.Mesh( geometry, material );
-    obj.position = new THREE.Vector3(i * 5, 0, 0);
+    obj.position.set(p[0], p[1], p[2]);
     scene.add(obj);
   }
 
@@ -105,12 +105,11 @@ function evalBCurve(points, t) {
 
   var b0 = (1 - t) * (1 - t) * (1 - t);
   var b1 = 3 * t * (1 - t) * (1 - t);
-  var b2 = 3 * t * t * (t - 1);
+  var b2 = 3 * t * t * (1 - t);
   var b3 = t * t * t;
   var point = pointAddition(multPointScalar(points[0], b0), multPointScalar(points[1], b1));
-  var temp = pointAddition(multPointScalar(points[2], b2), multPointScalar(points[3], b3));
-  point = pointAddition(point, temp);
-  return point;
+  point = pointAddition(point, multPointScalar(points[2], b2));
+  return pointAddition(point, multPointScalar(points[3], b3));
 
 }
 
