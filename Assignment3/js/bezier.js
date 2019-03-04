@@ -1,4 +1,4 @@
-var camera, scene, renderer;
+var camera, scene, renderer, controls;
 var controlPoints, controlMesh;
 var pointsArrays = [];
 var stepSize = 0.1;
@@ -15,6 +15,8 @@ function init() {
   camera.position.y = 5;
   camera.position.z = 5;
   camera.rotation.x = -45;
+
+  controls = new THREE.TrackballControls(camera);
 
   // Generate mesh from control points
   var geometry = new THREE.BufferGeometry();
@@ -91,7 +93,7 @@ function init() {
 
 function animate() {
   requestAnimationFrame( animate );
-
+  controls.update();
   renderer.render( scene, camera );
 }
 
