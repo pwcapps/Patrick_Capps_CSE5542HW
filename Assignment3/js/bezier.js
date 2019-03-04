@@ -83,10 +83,10 @@ function init() {
   for ( i = 0; i <= 1; i += stepSize ) {
     var p = evalBCurve(curve1, i);
     console.log(p);
-    var geometry2 = new THREE.SphereGeometry(0.1, 10, 10);
-    material.wireframe = false;
-    var obj = new THREE.Mesh( geometry2, material );
-    obj.position = new THREE.Vector3(p[0], p[1], p[2]);
+    geometry = new THREE.SphereGeometry(0.05, 10, 10);
+    material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false } );
+    var obj = new THREE.Mesh( geometry, material );
+    obj.position = new THREE.Vector3(i * 5, 0, 0);
     scene.add(obj);
   }
 
