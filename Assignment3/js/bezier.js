@@ -79,6 +79,9 @@ function init() {
   //
   // }
   pointsArrays = listToVectors(controlPoints);
+  console.log(pointsArrays);
+  console.log(vectorsToList(pointsArrays));
+  console.log(controlPoints);
 
   // var curve1 = [pointsArrays[0], pointsArrays[1], pointsArrays[2], pointsArrays[3]];
   // for ( i = 0; i <= 1; i += stepSize ) {
@@ -165,4 +168,12 @@ function listToVectors(vertexList) {
   }
 
   return vectors;
+}
+
+function vectorsToList(vectors) {
+  list = [];
+  for (i = 0; i < vectors.length; i++) {
+    list.push(vectors[i][0], vectors[i][1], vectors[i][2]);
+  }
+  return list;
 }
