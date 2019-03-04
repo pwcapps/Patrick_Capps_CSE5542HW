@@ -1,33 +1,9 @@
 var camera, scene, renderer;
 var controlPoints, controlMesh;
 var pointsArrays = [];
-var stepSize = 0.2;
+var stepSize = 0.1;
 
-controlPoints = [
-  -1.5, 0.0, -1.5,
-  -1.5, 0.0, -0.5,
-  -1.5, 0.0, 0.5,
-  -1.5, 0.0, 1.5,
-  -0.5, 0.0, -1.5,
-  -0.5, 0.0, -0.5,
-  -0.5, 0.0, 0.5,
-  -0.5, 0.0, 1.5,
-  0.5, 0.0, -1.5,
-  0.5, 0.0, -0.5,
-  0.5, 0.0, 0.5,
-  0.5, 0.0, 1.5,
-  1.5, 0.0, -1.5,
-  1.5, 0.0, -0.5,
-  1.5, 0.0, 0.5,
-  1.5, 0.0, 1.5
-]
-
-var bezier = [
-  [-1, 3, -3, 1],
-  [3, -6, 3, 0],
-  [-3, 3, 0, 0],
-  [1, 0, 0, 0]
-]
+controlPoints = generateControlPoints(-3, 3, 1, 4);
 
 init();
 animate();
@@ -44,12 +20,10 @@ function init() {
   var geometry = new THREE.BufferGeometry();
 
   var segments = 3;
-
   var indices = [];
   var vertices = controlPoints;
 
   for ( i = 0; i < segments; i++ ) {
-
     for ( j = 0; j < segments; j++ ) {
 
       var a = i * ( segments + 1 ) + ( j + 1 );
@@ -61,7 +35,6 @@ function init() {
       indices.push( b, c, d ); // face two
 
     }
-
   }
 
   geometry.setIndex(indices);
@@ -70,11 +43,14 @@ function init() {
   controlMesh = new THREE.Mesh( geometry, material );
   scene.add(controlMesh);
 
+  // Change control point representation to vector3 like arrays
   pointsArrays = listToVectors(controlPoints);
+  // Draw control points
   for (i = 0; i < pointsArrays.length; i++) {
     createPoint(pointsArrays[i]);
   }
 
+  // Get array of points for bezier surface
   var bezierPoints = [];
   for (u = 0; u <= 1; u += stepSize) {
     for (v = 0; v <= 1; v += stepSize) {
@@ -82,9 +58,11 @@ function init() {
     }
   }
 
+  // Change representation to fit buffer geometry
   bezierPoints = vectorsToList(bezierPoints);
-  segments = 1 / stepSize;
 
+  // Find indices for points and generate mesh
+  segments = 1 / stepSize;
   var bIndices = [];
   for ( i = 0; i < segments; i++ ) {
     for ( j = 0; j < segments; j++ ) {
@@ -117,6 +95,7 @@ function animate() {
   renderer.render( scene, camera );
 }
 
+// Evalueate Bezier surface by evaluating curves in two directions
 function evalBSurface(points, u, v) {
     var uPoints = [];
     for (i = 0; i < 4; i++) {
@@ -131,6 +110,7 @@ function evalBSurface(points, u, v) {
     return evalBCurve(uPoints, v);
 }
 
+// Evaluate Bezier curve by calculating polynomial
 function evalBCurve(points, t) {
 
   var b0 = (1 - t) * (1 - t) * (1 - t);
@@ -143,18 +123,21 @@ function evalBCurve(points, t) {
 
 }
 
+// Vector scalar multiplication
 function multPointScalar(point, s) {
 
   return [point[0] * s, point[1] * s, point[2] * s];
 
 }
 
+// Vector addition
 function pointAddition(p1, p2) {
 
   return [p1[0] + p2[0], p1[1] + p2[1], p1[2] + p2[2]];
 
 }
 
+// Create sphere for control points
 function createPoint(p) {
   var geometry = new THREE.SphereGeometry(0.05, 10, 10);
   var material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: false } );
@@ -180,4 +163,23 @@ function vectorsToList(vectors) {
     list.push(vectors[i][0], vectors[i][1], vectors[i][2]);
   }
   return list;
+}
+
+// Somewhat randomize control points
+function generateControlPoints(minDim, maxDim, xzRange, yRange) {
+    var vertices = [];
+    var stepSize = (maxDim - minDim) / 3;
+    for (i = 0; i < 4; i++) {
+      var zDim = minDim + stepSize * i;
+      var pos = minDim;
+      for (j = 0; j < 4; j++) {
+        var x = Math.random() * xzRange + (pos - xzRange / 2);
+        var y = Math.random() * yRange - (yRange / 2);
+        var z = Math.random() * xzRange + (zDim - xzRange / 2);
+        vertices.push(x, y, zDim);
+        pos += stepSize;
+
+      }
+    }
+    return vertices;
 }
